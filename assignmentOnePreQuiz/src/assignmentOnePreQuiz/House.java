@@ -45,6 +45,7 @@ class House {
 		
 		house1.setSqFt(1500.0f);
 		
+		System.out.println(house1);
 		
 		if (house3 == house2) {
 			System.out.println("same");
