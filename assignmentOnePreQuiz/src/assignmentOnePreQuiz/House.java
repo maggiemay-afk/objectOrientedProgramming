@@ -1,6 +1,5 @@
 package assignmentOnePreQuiz;
 
-
 class House {
 	private int floors = 0;
 	private float squareFeet = 0;
@@ -20,7 +19,8 @@ class House {
 	}
 	
 	public House (House in) {
-		
+		floors = in.floors;
+		squareFeet = in.squareFeet;
 	}
 	
 	public void setFloors (int f) {
@@ -32,7 +32,7 @@ class House {
 	}
 	
 	public String toString () {
-		return "I'm in the toString";
+		return "House has " + floors + " floors and " + squareFeet + " square feet";
 	}
 
 	public static void main (String[] args) {
@@ -43,7 +43,7 @@ class House {
 		house2 = new House(2500.0f);
 		House house3 = new House(house2);
 		
-		house1.setSqFt(0);
+		house1.setSqFt(1500.0f);
 		
 		
 		if (house3 == house2) {
