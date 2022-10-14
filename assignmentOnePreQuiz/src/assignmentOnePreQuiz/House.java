@@ -34,8 +34,18 @@ class House {
 	public String toString () {
 		return "House has " + floors + " floors and " + squareFeet + " square feet";
 	}
+	
+	private static int m (int input) {
+		input = input -4;
+		return input +1;
+	}
+	
 
 	public static void main (String[] args) {
+			
+		float f = 10.3f;
+		int n1 = (int) f + 7;
+		System.out.println(n1);
 		
 		House house1, house2;
 		
