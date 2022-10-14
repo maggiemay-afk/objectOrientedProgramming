@@ -34,6 +34,7 @@ public class CastList {
 		
 		int delIndex = -1;
 		
+		//Search array for the provided roleToDel argument, set index if found
 		for (int i = 0; i < castListIndex; i++) {
 			if (tvShowRoles[i].equals(roleToDel)) {
 				delIndex = i;
@@ -41,15 +42,16 @@ public class CastList {
 			}
 		}
 		
+		//Only if index was found, delete Role and move roles up in array
 		if (delIndex != -1) {
 			for (int i = delIndex; i < castListIndex -1; i++) {
 				tvShowRoles[i] = tvShowRoles[i + 1];
 			}
+			
 			tvShowRoles[castListIndex - 1] = null;
 			castListIndex--;
-		} else {
 			
-		}
+		} 
 	}
 	
 	public String toString () {

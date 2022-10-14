@@ -1,9 +1,16 @@
-package a1;
+/**
+ * Name: Maggie Herms
+ * Email: mkherms@uwm.edu
+ * 
+ */
+package a3;
 
-import a1.TableRow;
 import java.util.Arrays;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
+
+import a3.TableRow;
+
 import java.io.*;
 
 public class TextTable {

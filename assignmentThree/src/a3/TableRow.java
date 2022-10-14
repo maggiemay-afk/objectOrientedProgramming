@@ -1,4 +1,9 @@
-package a1;
+/**
+ * Name: Maggie Herms
+ * Email: mkherms@uwm.edu
+ * 
+ */
+package a3;
 
 public class TableRow {
 

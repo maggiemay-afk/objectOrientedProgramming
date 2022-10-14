@@ -1,9 +1,9 @@
-package a1;
+package a3;
 
 import javax.swing.JOptionPane;
 
-import a1.TableRow;
-import a1.TextTable;
+import a3.TableRow;
+import a3.TextTable;
 
 /**
  * <p> Title: APC 390 Assignment #1 </p>
@@ -21,7 +21,7 @@ import a1.TextTable;
  * 
  */
 
-public class Assign1Main {
+public class Assign3Main {
 	static final int LOAD = 1, SAVE = 2, ADD_ROW = 3, REMOVE_ROW = 4, FIND_ROW = 5, QUIT = 6;
 
 	static final String welcomeMessage = "This program implements an interactive table builder.\n"
