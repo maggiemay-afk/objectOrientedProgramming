@@ -4,14 +4,13 @@
  * 
  */
 package a3;
-
 import java.util.Arrays;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
-
+import java.io.*;
 import a3.TableRow;
 
-import java.io.*;
+
 
 public class TextTable {
 
