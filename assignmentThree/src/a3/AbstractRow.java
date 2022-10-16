@@ -14,6 +14,8 @@ import java.io.*;
 public abstract class AbstractRow {
 	
 	
-	public abstract void equals ();
+	public abstract Boolean equals ();
+	
+	
 
 }

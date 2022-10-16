@@ -1,9 +1,0 @@
-Table data for people in my group 2021
-15, Rowan, 1.5
-19, Samuel, 9.29
-21, Sarah, 2.13
-13, Trevor, -21.40
-17, Bryan, 5.37
-32, Ying, -13.22
-102, Felipe, 27.29
-75, HueCheng, 10.7

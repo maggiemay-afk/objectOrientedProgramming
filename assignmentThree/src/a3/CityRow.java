@@ -26,12 +26,17 @@ public class CityRow extends AbstractRow {
 	/**
 	 * Overrides Super.equals
 	 */
-	public void equals() {
+	public Boolean equals() {
+		return true;
 		
 	}
 	
 	public String[] getSingleCityRow() {
 		return this.singleCityRow;
+	}
+	
+	public String toString () {
+		return String.join(", ", singleCityRow);
 	}
 
 }
