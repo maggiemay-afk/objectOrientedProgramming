@@ -8,8 +8,11 @@ package a3;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Scanner;
+
+import javax.swing.JOptionPane;
 
 public class StadiumTable extends AbstractTable {
 
@@ -29,20 +32,25 @@ public class StadiumTable extends AbstractTable {
 			setTableIndex(0);
 		}
 		
+		Scanner input = null;
+		
 		try {
-			Scanner input = new Scanner(new FileReader(fileName));
+			input = new Scanner(new FileReader(fileName));
 			
 			//checks to see if a text file is empty.
 			if (input.hasNext()) {
 				setTableHeader(input.nextLine());
 			} else {
-				System.err.println("Your file seems to be empty");
-				return;
+				throw new EmptyFileException(fileName);
 			}
 			
 			while (input.hasNextLine() && input.hasNext()) { //If a file has extra blank lines, second conditional will return false
 				
 				String split[] = input.nextLine().split(","); //split the input array at comma delimiter
+				
+				if (split.length != 4) {
+					throw new ColumnMismatchException(4, split.length);
+				}
 				
 				String inputStadiumName = split[0].trim(); //trim each of the three Strings to account for whitespace
 				String inputStadiumCityID = split[1].trim();
@@ -52,9 +60,18 @@ public class StadiumTable extends AbstractTable {
 				addRow(inputStadiumName, inputStadiumCityID, inputStadiumTeam, inputStadiumCapacity);
 			}
 		} catch (FileNotFoundException fnfx) {
-			System.err.println(fnfx.getMessage());
-		} 
-		
+			JOptionPane.showMessageDialog(null, fnfx.getMessage(), "File Not Found", JOptionPane.ERROR_MESSAGE);
+		} catch (ColumnMismatchException cme) {
+			JOptionPane.showMessageDialog(null, cme.getMessage(), "Column Mismatch", JOptionPane.ERROR_MESSAGE);
+		} catch (EmptyFileException efe) {
+			JOptionPane.showMessageDialog(null, efe.getMessage(), "Empty File", JOptionPane.ERROR_MESSAGE);
+		} catch (TableRowLimitException trl) {
+			JOptionPane.showMessageDialog(null, trl.getMessage(), "Maximum Rows Reached", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			if (input != null) {
+				input.close();
+			}
+		}
 	}
 	
 	
@@ -65,11 +82,15 @@ public class StadiumTable extends AbstractTable {
 	 */
 	public void saveTable (String fileName) {
 		
+		PrintWriter output = null;
+		
 		try {
-			PrintWriter output = new PrintWriter(fileName);
+			output = new PrintWriter(fileName);
 			
-			if (getTableHeader() == null) {
-				output.println("No Header");
+			if (getTableHeader() == null && getTableIndex() == 0) {
+				throw new EmptyTableException();
+			} else if (getTableHeader() == null){
+				output.println("No Table Header");
 			} else {
 				output.println(getTableHeader());
 			}
@@ -78,12 +99,15 @@ public class StadiumTable extends AbstractTable {
 				output.println(this.getTableRows()[i]);
 			}
 			
-			output.close();
-			
 		} catch (FileNotFoundException fnfx) {
-			System.err.println(fnfx.getMessage());
+			JOptionPane.showMessageDialog(null, fnfx.getMessage(), "File Not Found", JOptionPane.ERROR_MESSAGE);
+		} catch (EmptyTableException ete) {
+			JOptionPane.showMessageDialog(null, ete.getMessage(), "Empty Table", JOptionPane.ERROR_MESSAGE);
+		} finally{
+			if (output != null) {
+				output.close();	
+			}
 		}
-		
 	}
 	
 	
@@ -92,14 +116,14 @@ public class StadiumTable extends AbstractTable {
 	 * @param stadCityID
 	 * @param stadTeamName
 	 * @param stadCapacity
+	 * @throws TableRowLimitException 
 	 */
-	public void addRow (String stadName, String stadCityID, String stadTeamName, String stadCapacity) {
+	public void addRow (String stadName, String stadCityID, String stadTeamName, String stadCapacity) throws TableRowLimitException {
 		
 		int currentIndex = this.getTableIndex();
 		
 		if (currentIndex == 100) {
-			System.err.println("The table is full, row not added"); //Doesn't allow for a "table" larger than 100 rows.
-			return;
+			throw new TableRowLimitException(); //Doesn't allow for a table larger than 100 rows.
 		} else {
 			
 			StadiumRow sr = new StadiumRow(stadName, stadCityID, stadTeamName, stadCapacity);
@@ -114,8 +138,9 @@ public class StadiumTable extends AbstractTable {
 	 * Return success or fail message
 	 * @param stadCityID
 	 * @return String
+	 * @throws RowNotFoundException
 	 */
-	public String removeRow(String stadCityID) {
+	public String removeRow(String stadCityID) throws RowNotFoundException{
 		
 		boolean found = false;
 		
@@ -137,7 +162,7 @@ public class StadiumTable extends AbstractTable {
 		}
 		
 		if (found == false) {
-			return "Sorry, we couldn't find that ID. Row not removed.";
+			throw new RowNotFoundException(stadCityID);
 		} else {
 			return "Success. Row Removed";
 		}
@@ -148,8 +173,9 @@ public class StadiumTable extends AbstractTable {
 	 * Return entire row if found or error message if not found
 	 * @param stadiumCityID
 	 * @return String
+	 * @throws RowNotFoundException
 	 */
-	public String findRow(String stadiumCityID) {
+	public String findRow(String stadiumCityID) throws RowNotFoundException{
 		
 		for (int i= 0; i < getTableIndex(); i++) {
 			String [] currentRow = ((StadiumRow) getTableRows()[i]).getSingleStadRow();
@@ -158,7 +184,7 @@ public class StadiumTable extends AbstractTable {
 				return getTableRows()[i].toString();
 			}	
 		}
-		return "Sorry, we couldn't find that stadium city ID.";
+		throw new RowNotFoundException(stadiumCityID);
 	}
 
 }

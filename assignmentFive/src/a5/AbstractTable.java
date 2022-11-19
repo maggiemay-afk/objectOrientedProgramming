@@ -4,17 +4,19 @@
  * 
  */
 
-package a3;
+package a5;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 import java.io.*;
 
-public abstract class AbstractTable {
+public abstract class AbstractTable <T extends AbstractRow>{ 
 	
 	private String tableHeader;
-	private AbstractRow[] tableRows = new AbstractRow[100];
+	List <T> tableRows = new ArrayList<>();
 	private int tableIndex;
 	
 	
@@ -24,13 +26,13 @@ public abstract class AbstractTable {
 	
 	/** @return AbstractRow Array
 	 */
-	public AbstractRow[] getTableRows () {
+	public List<T> getTableRows () {
 		return this.tableRows;
 	}
 	
 	/** @param tableRows
 	 */
-	public void setTableRows(AbstractRow[] tableRows) {
+	public void setTableRows(List<T> tableRows) {
 		this.tableRows = tableRows;
 	}
 	

@@ -28,20 +28,25 @@ public class CityTable extends AbstractTable {
 			setTableIndex(0);
 		}
 		
+		Scanner input = null;
+		
 		try {
-			Scanner input = new Scanner(new FileReader(fileName));
+			input = new Scanner(new FileReader(fileName));
 			
 			//checks to see if a text file is empty.
 			if (input.hasNext()) {
 				setTableHeader(input.nextLine());
 			} else {
-				System.err.println("Your file seems to be empty");
-				return;
+				throw new EmptyFileException(fileName);
 			}
 			
 			while (input.hasNextLine() && input.hasNext()) { //If a file has extra blank lines, second conditional will return false, ending loop
 				
 				String split[] = input.nextLine().split(","); //split the input array at comma delimiter
+				
+				if (split.length != 3) {
+					throw new ColumnMismatchException(3, split.length);
+				}
 				
 				String inputCityName = split[0].trim(); //trim each of the three Strings to account for whitespace
 				String inputCityID = split[1].trim();
@@ -50,9 +55,18 @@ public class CityTable extends AbstractTable {
 				addRow(inputCityName, inputCityID, inputCityPop);
 			}
 		} catch (FileNotFoundException fnfx) {
-			System.err.println(fnfx.getMessage());
-		} 
-		
+			JOptionPane.showMessageDialog(null, fnfx.getMessage(), "File Not Found", JOptionPane.ERROR_MESSAGE);
+		} catch (ColumnMismatchException cme) {
+			JOptionPane.showMessageDialog(null, cme.getMessage(), "Column Number Mismatch", JOptionPane.ERROR_MESSAGE);
+		} catch (EmptyFileException efe) {
+			JOptionPane.showMessageDialog(null, efe.getMessage(), "Empty File", JOptionPane.ERROR_MESSAGE);
+		} catch (TableRowLimitException trl) {
+			JOptionPane.showMessageDialog(null, trl.getMessage(), "Maximum Rows Reached", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			if (input != null) {
+				input.close();
+			}
+		}
 	}
 	
 	/** Save the current table to text file. Uses the city row toString method.
@@ -62,11 +76,15 @@ public class CityTable extends AbstractTable {
 	 */
 	public void saveTable (String fileName) {
 		
+		PrintWriter output = null;
+		
 		try {
-			PrintWriter output = new PrintWriter(fileName);
+			output = new PrintWriter(fileName);
 			
-			if (getTableHeader() == null) { //print "No Header" instead of null if the user 
-				output.println("No Header");
+			if (getTableHeader() == null && getTableIndex() == 0) { 
+				throw new EmptyTableException();
+			} else if (getTableHeader() == null) {
+				output.println("No Table Header");
 			} else {
 				output.println(getTableHeader());
 			}
@@ -75,12 +93,15 @@ public class CityTable extends AbstractTable {
 				output.println(this.getTableRows()[i]);
 			}
 			
-			output.close();
-			
 		} catch (FileNotFoundException fnfx) {
-			System.err.println(fnfx.getMessage());
+			JOptionPane.showMessageDialog(null, fnfx.getMessage(), "File Not Found", JOptionPane.ERROR_MESSAGE);
+		} catch (EmptyTableException ete) {
+			JOptionPane.showMessageDialog(null, ete.getMessage(), "Empty Table", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			if (output != null) {
+				output.close();
+			}
 		}
-		
 	}
 	
 	
@@ -88,14 +109,14 @@ public class CityTable extends AbstractTable {
 	 * @param cityName
 	 * @param cityID
 	 * @param cityPop
+	 * @throws TableRowLimitException 
 	 */
-	public void addRow (String cityName, String cityID, String cityPop) {
+	public void addRow (String cityName, String cityID, String cityPop) throws TableRowLimitException {
 		
 		int currentIndex = this.getTableIndex();
 		
 		if (currentIndex == 100) {
-			System.err.println("The table is full, row not added"); //Doesn't allow for a table larger than 100 rows.
-			return;
+			throw new TableRowLimitException(); //Doesn't allow for a table larger than 100 rows.
 		} else {
 			
 			CityRow cr = new CityRow(cityName, cityID, cityPop);
@@ -109,8 +130,10 @@ public class CityTable extends AbstractTable {
 	 * Return success or fail message
 	 * @param cityID
 	 * @return String
+	 * @throws RowNotFoundException
 	 */
-	public String removeRow(String cityID) {
+	public String removeRow(String cityID) throws RowNotFoundException{
+		
 		boolean found = false;
 		
 		for (int i= 0; i < getTableIndex(); i++) {
@@ -131,7 +154,7 @@ public class CityTable extends AbstractTable {
 		}
 		
 		if (found == false) {
-			return "Sorry, we couldn't find that ID. Row not removed.";
+			throw new RowNotFoundException(cityID);
 		} else {
 			return "Success. Row Removed";
 		}
@@ -141,8 +164,9 @@ public class CityTable extends AbstractTable {
 	 * Return entire row if found or error message if not found
 	 * @param cityID
 	 * @return String
+	 * @throws RowNotFoundException
 	 */
-	public String findRow(String cityID) {
+	public String findRow(String cityID) throws RowNotFoundException{
 		
 		for (int i= 0; i < getTableIndex(); i++) {
 			String [] currentRow = ((CityRow) getTableRows()[i]).getSingleCityRow();
@@ -151,7 +175,7 @@ public class CityTable extends AbstractTable {
 				return getTableRows()[i].toString();
 			}	
 		}
-		return "Sorry, we couldn't find that city ID.";
+		throw new RowNotFoundException(cityID);
 	}
 
 }

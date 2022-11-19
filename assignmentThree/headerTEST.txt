@@ -1,1 +1,0 @@
-My Cities: City, city id, population in millions
